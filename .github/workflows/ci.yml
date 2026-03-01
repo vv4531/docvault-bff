@@ -28,3 +28,18 @@ jobs:
           tags: |
             ghcr.io/vvaddineni/docvault-bff:latest
             ghcr.io/vvaddineni/docvault-bff:${{ github.sha }}
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Container Apps
+        uses: azure/container-apps-deploy-action@v2
+        with:
+          containerAppName: docvault-bff
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          imageToDeploy: ghcr.io/vvaddineni/docvault-bff:${{ github.sha }}
+          registryUrl: ghcr.io
+          registryUsername: ${{ github.actor }}
+          registryPassword: ${{ secrets.GHCR_TOKEN }}
