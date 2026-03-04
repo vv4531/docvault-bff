@@ -32,7 +32,8 @@ const upload  = multer({
 // ── GET /api/documents — list with pagination + filters ───────────────────
 router.get('/', asyncH(async (req, res) => {
   const { page = 1, limit = 25, tier, department, sortBy = 'uploadedAt', order = 'desc' } = req.query;
-  const data = await apim.get('/documents/v1/documents', { page, limit, tier, department, sortBy, order }, req.correlationId);
+  // Spring Pageable is 0-based; frontend sends 1-based page numbers
+  const data = await apim.get('/documents/v1/documents', { page: page - 1, size: limit, tier, department, sortBy, order }, req.correlationId);
   res.json(data);
 }));
 
