@@ -1,8 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install --only=production --silent
+COPY package.json package-lock.json ./
+RUN npm ci --only=production --silent
 
 COPY src/ ./src/
 
