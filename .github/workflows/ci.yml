@@ -27,8 +27,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/vvaddineni/docvault-bff:latest
-            ghcr.io/vvaddineni/docvault-bff:${{ github.sha }}
+            ghcr.io/vv4531/docvault-bff:latest
+            ghcr.io/vv4531/docvault-bff:${{ github.sha }}
 
       - name: Log in to Azure
         uses: azure/login@v2
@@ -40,7 +40,7 @@ jobs:
         with:
           containerAppName: docvault-bff
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          imageToDeploy: ghcr.io/vvaddineni/docvault-bff:${{ github.sha }}
+          imageToDeploy: ghcr.io/vv4531/docvault-bff:${{ github.sha }}
           registryUrl: ghcr.io
           registryUsername: ${{ github.actor }}
           registryPassword: ${{ secrets.GHCR_TOKEN }}
