@@ -51,6 +51,18 @@ router.post('/reindex', asyncH(async (req, res) => {
   res.status(202).json(data);
 }));
 
+// ── GET /api/documents/search — standard metadata search (Cosmos DB) ─────
+router.get('/search', asyncH(async (req, res) => {
+  const { q = '', page = 1, limit = 25 } = req.query;
+  const data = await apim.get(
+    '/documents/v1/documents/search',
+    { q, page: page - 1, size: limit },
+    req.correlationId
+  );
+  // Transform Spring Page → { results, count } to match AI Search shape
+  res.json({ results: data.content || [], count: data.totalElements || 0 });
+}));
+
 // ── GET /api/documents/:id — single document metadata ────────────────────
 router.get('/:id', asyncH(async (req, res) => {
   const data = await apim.get(`/documents/v1/documents/${req.params.id}`, {}, req.correlationId);
