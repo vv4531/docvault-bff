@@ -112,9 +112,17 @@ router.get('/:id/file', asyncH(async (req, res) => {
   }
 
   logger.info(`[Documents] Streaming file: docId=${req.params.id} [${req.correlationId}]`);
+  const download = req.query.download === 'true';
   const fileRes = await axios.get(data.sasUrl, { responseType: 'stream' });
-  res.setHeader('Content-Type', fileRes.headers['content-type'] || 'application/octet-stream');
-  res.setHeader('Content-Disposition', fileRes.headers['content-disposition'] || 'attachment');
+  const contentType = fileRes.headers['content-type'] || 'application/octet-stream';
+  // Extract filename from blob Content-Disposition for the attachment case
+  const blobDisposition = fileRes.headers['content-disposition'] || '';
+  const filenameMatch = blobDisposition.match(/filename="?([^";\r\n]+)"?/i);
+  const filename = filenameMatch ? filenameMatch[1] : `document-${req.params.id}`;
+  res.setHeader('Content-Type', contentType);
+  res.setHeader('Content-Disposition', download
+    ? `attachment; filename="${filename}"`
+    : `inline; filename="${filename}"`);
   if (fileRes.headers['content-length']) {
     res.setHeader('Content-Length', fileRes.headers['content-length']);
   }
